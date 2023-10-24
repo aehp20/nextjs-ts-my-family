@@ -67,6 +67,24 @@ function People() {
     },
   }
 
+  const fetchData = useCallback(
+    (currentPage: number, currentPageSize: number) => {
+      setIsFetching(true)
+      fetchPeople(currentPage, currentPageSize)
+        .then(({ items, total }) => {
+          setPeople(
+            items.map((person: { person_id: string }) => ({
+              ...person,
+              key: person.person_id,
+            }))
+          )
+          setTotalPages(total)
+        })
+        .finally(() => setIsFetching(false))
+    },
+    []
+  )
+
   const confirm = useCallback(async () => {
     const idsArray = selectedPeopleKeys.map((id) => `id=${id}`)
     const idsString = idsArray.join('&')
@@ -78,10 +96,11 @@ function People() {
 
     if (deletedResponse) {
       setSelectedPeopleKeys([])
+      fetchData(currentPage, currentPageSize)
 
       message.success('Delete success!')
     }
-  }, [selectedPeopleKeys])
+  }, [selectedPeopleKeys, fetchData, currentPage, currentPageSize])
 
   const handleOnChange = useCallback(
     (pagination: TablePaginationConfig) => {
@@ -97,19 +116,8 @@ function People() {
   )
 
   useEffect(() => {
-    setIsFetching(true)
-    fetchPeople(currentPage, currentPageSize)
-      .then(({ items, total }) => {
-        setPeople(
-          items.map((person: { person_id: string }) => ({
-            ...person,
-            key: person.person_id,
-          }))
-        )
-        setTotalPages(total)
-      })
-      .finally(() => setIsFetching(false))
-  }, [currentPage, currentPageSize])
+    fetchData(currentPage, currentPageSize)
+  }, [fetchData, currentPage, currentPageSize])
 
   return (
     <div>
