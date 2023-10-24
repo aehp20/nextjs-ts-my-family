@@ -1,6 +1,7 @@
 import { Pacifico } from 'next/font/google'
 
 import { RootStyleRegistry } from './components/RootStyleRegistry'
+import Navbar from './components/Navbar'
 
 import './globals.css'
 
@@ -12,7 +13,7 @@ export const metadata = {
 
 const pacifico = Pacifico({
   weight: ['400'],
-  // styles: ['normal'],
+  style: ['normal'],
   subsets: ['latin'],
 })
 
@@ -25,7 +26,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={pacifico.className}>
         <RootStyleRegistry>
-          {/* <Navbar /> */}
+          <Navbar />
           {children}
         </RootStyleRegistry>
       </body>
