@@ -50,9 +50,7 @@ function FormPerson({ params }: { params: { id: string } }) {
     message.error('Submit failed!')
   }
 
-  // TODO
-  const onGenderChange = (value: unknown) => {
-    console.log('kkkkkkk onGenderChange', value)
+  const onGenderChange = (value: string) => {
     form.setFieldsValue({ gender: value })
   }
 
