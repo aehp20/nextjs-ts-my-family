@@ -3,7 +3,8 @@ import { Pacifico } from 'next/font/google'
 import { RootStyleRegistry } from './components/RootStyleRegistry'
 import Navbar from './components/Navbar'
 
-import './globals.css'
+// todo remove it when we have themes
+// import './globals.css'
 
 export const metadata = {
   title: 'My family',
