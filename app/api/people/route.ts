@@ -13,6 +13,14 @@ export async function GET(request: NextRequest) {
   const people = await prisma.person.findMany({
     skip: (page - 1) * limit,
     take: limit,
+    select: {
+      person_id: true,
+      first_name: true,
+      father_last_name: true,
+      mother_last_name: true,
+      gender: true,
+      birthday: true,
+    },
     orderBy: {
       first_name: 'asc',
     },

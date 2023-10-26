@@ -40,8 +40,6 @@ function FormPerson({ params }: { params: { id: string } }) {
     if (person) {
       message.success('Submit success!')
 
-      console.log('person', person)
-
       router.push('/people')
     }
   }

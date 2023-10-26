@@ -43,4 +43,6 @@ npx prisma init --datasource-provider postgresql
 npx prisma generate
 npx prisma db pull
 npx prisma migrate dev --name init
+npx prisma migrate dev --name update-models --create-only
+npx prisma migrate dev
 ```
