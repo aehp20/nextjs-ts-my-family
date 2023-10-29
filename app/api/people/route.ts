@@ -39,6 +39,12 @@ export async function POST(request: NextRequest) {
       gender,
       birthday,
     },
+    select: {
+      person_id: true,
+      first_name: true,
+      father_last_name: true,
+      mother_last_name: true,
+    },
   })
   return NextResponse.json(newPerson)
 }
