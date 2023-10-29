@@ -5,6 +5,7 @@ import { Form, Select, Spin, Modal } from 'antd'
 import debounce from 'lodash/debounce'
 
 import FormPerson from '@/app/people/add/FormPerson'
+import type { Person } from '@/app/people/types'
 
 async function fetchPeople(searchValue: string) {
   const response = await fetch(`/api/people/search?value=${searchValue}`)
@@ -94,10 +95,10 @@ function SelectPeople({
     setIsModalOpen(false)
   }
 
-  const handleOnSuccess = (data: any) => {
-    console.log('handleOnSuccess', data)
+  const handleOnSuccess = (person: Person) => {
+    console.log('handleOnSuccess', person)
 
-    form.setFieldsValue({ [name]: data.person_id })
+    form.setFieldsValue({ [name]: person.person_id })
 
     handleOk()
   }

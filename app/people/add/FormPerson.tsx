@@ -4,6 +4,8 @@ import { useEffect } from 'react'
 import { Button, DatePicker, Form, Input, Space, Select, message } from 'antd'
 import dayjs, { Dayjs } from 'dayjs'
 
+import type { Person } from '../types'
+
 async function fetchPerson(id: string) {
   const response = await fetch(`/api/people/${id}`)
   const person = await response.json()
@@ -16,7 +18,7 @@ function FormPerson({
   onSuccess,
 }: {
   params?: { id: string }
-  onSuccess?: (response: any) => void
+  onSuccess?: (person: Person) => void
 }) {
   const [form] = Form.useForm()
 
