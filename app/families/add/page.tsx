@@ -47,9 +47,9 @@ function FormFamily({ params }: { params: { id: string } }) {
         onFinish={onFinish}
         onFinishFailed={onFinishFailed}
         autoComplete="off"
-        initialValues={{ gender: 'm' }}
+        // initialValues={{ gender: 'm' }}
       >
-        <SelectPeople name="father" label="Father" required />
+        <SelectPeople name="father" label="Father" required form={form} />
         {/* <SelectPeople name="mother" label="Mother" gender="w" required /> */}
         <Form.Item>
           <Space>

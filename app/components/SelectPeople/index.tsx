@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useMemo, useRef } from 'react'
-import { Form, Select, Spin } from 'antd'
+import { Form, Select, Spin, Modal } from 'antd'
 import debounce from 'lodash/debounce'
 
 async function fetchPeople(searchValue: string) {
@@ -15,10 +15,12 @@ function SelectPeople({
   name,
   label,
   required = false,
+  form,
 }: {
   name: string
   label: string
   required?: boolean
+  form: unknown
 }) {
   const debounceTimeout = 500
   const NEW_ITEM = 'NEW_ITEM'
@@ -27,6 +29,7 @@ function SelectPeople({
   const [options, setOptions] = useState([])
   const fetchRef = useRef(0)
   const [value, setValue] = useState<string>()
+  const [isModalOpen, setIsModalOpen] = useState(false)
 
   const debounceFetcher = useMemo(() => {
     const loadOptions = (searchValue: string) => {
@@ -64,12 +67,29 @@ function SelectPeople({
   }, [debounceTimeout])
 
   const handleOnChange = (value: string) => {
+    console.log('handleOnChange', value)
     if (value !== NEW_ITEM) {
       setValue(value)
+      form.setFieldsValue({ [name]: value })
     } else {
+      // setValue('')
       console.log('value', value)
+      form.setFieldsValue({ [name]: '' })
       // this.setState({ showList1: true });
+      showModal()
     }
+  }
+
+  const showModal = () => {
+    setIsModalOpen(true)
+  }
+
+  const handleOk = () => {
+    setIsModalOpen(false)
+  }
+
+  const handleCancel = () => {
+    setIsModalOpen(false)
   }
 
   const renderOptions = options.map(
@@ -81,20 +101,32 @@ function SelectPeople({
   )
 
   return (
-    <Form.Item name={name} label={label} rules={[{ required }]}>
-      <Select
-        allowClear
-        showSearch
-        value={value}
-        filterOption={false}
-        onSearch={debounceFetcher}
-        notFoundContent={fetching ? <Spin size="small" /> : null}
-        onChange={handleOnChange}
+    <>
+      <Form.Item name={name} label={label} rules={[{ required }]}>
+        <Select
+          allowClear
+          showSearch
+          value={value}
+          filterOption={false}
+          onSearch={debounceFetcher}
+          notFoundContent={fetching ? <Spin size="small" /> : null}
+          onChange={handleOnChange}
+        >
+          {renderOptions}
+          <Select.Option value={NEW_ITEM}>+ New Item</Select.Option>
+        </Select>
+      </Form.Item>
+      <Modal
+        title="Basic Modal"
+        open={isModalOpen}
+        onOk={handleOk}
+        onCancel={handleCancel}
       >
-        {renderOptions}
-        <Select.Option value={NEW_ITEM}>+ New Item</Select.Option>
-      </Select>
-    </Form.Item>
+        <p>Some contents...</p>
+        <p>Some contents...</p>
+        <p>Some contents...</p>
+      </Modal>
+    </>
   )
 }
 
