@@ -1,9 +1,9 @@
 'use client'
 
-import FormPerson from '../add/page'
+import PagePerson from '../add/page'
 
 function EditPeople({ params }: { params: { id: string } }) {
-  return <FormPerson params={params} />
+  return <PagePerson params={params} />
 }
 
 export default EditPeople

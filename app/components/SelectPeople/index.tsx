@@ -4,6 +4,8 @@ import { useState, useMemo, useRef } from 'react'
 import { Form, Select, Spin, Modal } from 'antd'
 import debounce from 'lodash/debounce'
 
+import FormPerson from '@/app/people/add/FormPerson'
+
 async function fetchPeople(searchValue: string) {
   const response = await fetch(`/api/people/search?value=${searchValue}`)
   const people = await response.json()
@@ -92,6 +94,14 @@ function SelectPeople({
     setIsModalOpen(false)
   }
 
+  const handleOnSuccess = (data: any) => {
+    console.log('handleOnSuccess', data)
+
+    form.setFieldsValue({ [name]: data.person_id })
+
+    handleOk()
+  }
+
   const renderOptions = options.map(
     (option: { value: string; label: string }) => (
       <Select.Option key={option.value} value={option.value}>
@@ -122,9 +132,7 @@ function SelectPeople({
         onOk={handleOk}
         onCancel={handleCancel}
       >
-        <p>Some contents...</p>
-        <p>Some contents...</p>
-        <p>Some contents...</p>
+        <FormPerson onSuccess={handleOnSuccess} />
       </Modal>
     </>
   )
