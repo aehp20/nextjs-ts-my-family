@@ -2,6 +2,8 @@
 
 import { useState, useMemo, useRef } from 'react'
 import { Form, Select, Spin, Modal } from 'antd'
+import { FormInstance } from 'antd/es/form'
+
 import debounce from 'lodash/debounce'
 
 import FormPerson from '@/app/people/add/FormPerson'
@@ -14,6 +16,14 @@ async function fetchPeople(searchValue: string) {
   return people
 }
 
+const getPersonLabel = (person: Person) =>
+  `${person.first_name} ${person.father_last_name} ${person.mother_last_name}`
+
+interface OptionProps {
+  value: string
+  label: string
+}
+
 function SelectPeople({
   name,
   label,
@@ -23,13 +33,13 @@ function SelectPeople({
   name: string
   label: string
   required?: boolean
-  form: unknown
+  form: FormInstance
 }) {
   const debounceTimeout = 500
   const NEW_ITEM = 'NEW_ITEM'
 
   const [fetching, setFetching] = useState(false)
-  const [options, setOptions] = useState([])
+  const [options, setOptions] = useState<OptionProps[]>([])
   const fetchRef = useRef(0)
   const [value, setValue] = useState<string>()
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -58,7 +68,7 @@ function SelectPeople({
                 mother_last_name: string
               }) => ({
                 value: person.person_id,
-                label: `${person.first_name} ${person.father_last_name} ${person.mother_last_name}`,
+                label: getPersonLabel(person),
               })
             )
           )
@@ -70,15 +80,11 @@ function SelectPeople({
   }, [debounceTimeout])
 
   const handleOnChange = (value: string) => {
-    console.log('handleOnChange', value)
     if (value !== NEW_ITEM) {
       setValue(value)
       form.setFieldsValue({ [name]: value })
     } else {
-      // setValue('')
-      console.log('value', value)
       form.setFieldsValue({ [name]: '' })
-      // this.setState({ showList1: true });
       showModal()
     }
   }
@@ -96,7 +102,13 @@ function SelectPeople({
   }
 
   const handleOnSuccess = (person: Person) => {
-    console.log('handleOnSuccess', person)
+    setOptions([
+      {
+        value: person.person_id,
+        label: getPersonLabel(person),
+      },
+      ...options,
+    ])
 
     form.setFieldsValue({ [name]: person.person_id })
 
@@ -127,14 +139,16 @@ function SelectPeople({
           <Select.Option value={NEW_ITEM}>+ New Item</Select.Option>
         </Select>
       </Form.Item>
-      <Modal
-        title="Basic Modal"
-        open={isModalOpen}
-        onOk={handleOk}
-        onCancel={handleCancel}
-      >
-        <FormPerson onSuccess={handleOnSuccess} />
-      </Modal>
+      {isModalOpen && (
+        <Modal
+          title="Add a new person"
+          open={isModalOpen}
+          onCancel={handleCancel}
+          footer={null}
+        >
+          <FormPerson onSuccess={handleOnSuccess} />
+        </Modal>
+      )}
     </>
   )
 }

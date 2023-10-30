@@ -4,10 +4,11 @@ import { Button, Form, message, Space } from 'antd'
 import { useRouter } from 'next/navigation'
 
 import SelectPeople from '@/app/components/SelectPeople'
+import type { FamilyFormProps } from '@/app/families/types'
 
 function FormFamily({ params }: { params: { id: string } }) {
   const router = useRouter()
-  const [form] = Form.useForm()
+  const [form] = Form.useForm<FamilyFormProps>()
 
   const onFinish = async (values: {}) => {
     console.log('onfinish', values)
@@ -50,7 +51,7 @@ function FormFamily({ params }: { params: { id: string } }) {
         // initialValues={{ gender: 'm' }}
       >
         <SelectPeople name="father" label="Father" required form={form} />
-        {/* <SelectPeople name="mother" label="Mother" gender="w" required /> */}
+        <SelectPeople name="mother" label="Mother" required form={form} />
         <Form.Item>
           <Space>
             <Button type="primary" htmlType="submit">
