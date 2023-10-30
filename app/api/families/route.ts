@@ -44,29 +44,36 @@ export async function GET(request: NextRequest) {
   return NextResponse.json({ items: families, total: count._count.family_id })
 }
 
-// export async function POST(request: NextRequest) {
-//   const { father_id, mother_id, children } = await request.json()
-//   const newPerson = await prisma.person.create({
-//     data: {
-//       first_name,
-//       father_last_name,
-//       mother_last_name,
-//       gender,
-//       birthday,
-//     },
-//   })
-//   return NextResponse.json(newPerson)
-// }
+export async function POST(request: NextRequest) {
+  const { father, mother, children } = await request.json()
+  const newFamily = await prisma.family.create({
+    data: {
+      father_id: father,
+      mother_id: mother,
+    },
+  })
+  if (children && children.length > 0) {
+    children.forEach(async (person_id: string) => {
+      await prisma.person.update({
+        where: { person_id },
+        data: {
+          family_id: newFamily.family_id,
+        },
+      })
+    })
+  }
+  return NextResponse.json(newFamily)
+}
 
-// export async function DELETE(request: NextRequest) {
-//   try {
-//     const ids = request.nextUrl.searchParams.getAll('id')
-//     const result = await prisma.person.deleteMany({
-//       where: { person_id: { in: ids } },
-//     })
-//     return NextResponse.json(result)
-//   } catch (error: unknown) {
-//     if (error instanceof Error) return NextResponse.json(error.message)
-//     return NextResponse.json(String(error))
-//   }
-// }
+export async function DELETE(request: NextRequest) {
+  try {
+    const ids = request.nextUrl.searchParams.getAll('id')
+    const result = await prisma.family.deleteMany({
+      where: { family_id: { in: ids } },
+    })
+    return NextResponse.json(result)
+  } catch (error: unknown) {
+    if (error instanceof Error) return NextResponse.json(error.message)
+    return NextResponse.json(String(error))
+  }
+}

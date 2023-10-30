@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo, useRef } from 'react'
+import { useState, useMemo, useRef, useEffect } from 'react'
 import { Form, Select, Spin, Modal } from 'antd'
 import { FormInstance } from 'antd/es/form'
 
@@ -28,12 +28,16 @@ function SelectPeople({
   name,
   label,
   required = false,
+  multiple = false,
   form,
+  initialValue,
 }: {
   name: string
   label: string
   required?: boolean
+  multiple?: boolean
   form: FormInstance
+  initialValue?: Person | Person[]
 }) {
   const debounceTimeout = 500
   const NEW_ITEM = 'NEW_ITEM'
@@ -41,7 +45,7 @@ function SelectPeople({
   const [fetching, setFetching] = useState(false)
   const [options, setOptions] = useState<OptionProps[]>([])
   const fetchRef = useRef(0)
-  const [value, setValue] = useState<string>()
+  const [value, setValue] = useState<string | string[]>()
   const [isModalOpen, setIsModalOpen] = useState(false)
 
   const debounceFetcher = useMemo(() => {
@@ -79,13 +83,25 @@ function SelectPeople({
     return debounce(loadOptions, debounceTimeout)
   }, [debounceTimeout])
 
-  const handleOnChange = (value: string) => {
-    if (value !== NEW_ITEM) {
-      setValue(value)
-      form.setFieldsValue({ [name]: value })
+  const handleOnChange = (value: string | string[]) => {
+    if (multiple) {
+      const selectedItems = value as string[]
+      if (value.includes(NEW_ITEM)) {
+        const items = selectedItems.filter((item: string) => item !== NEW_ITEM)
+        form.setFieldsValue({ [name]: items })
+        showModal()
+      } else {
+        setValue(value)
+        form.setFieldsValue({ [name]: value })
+      }
     } else {
-      form.setFieldsValue({ [name]: '' })
-      showModal()
+      if (value === NEW_ITEM) {
+        form.setFieldsValue({ [name]: '' })
+        showModal()
+      } else {
+        setValue(value)
+        form.setFieldsValue({ [name]: value })
+      }
     }
   }
 
@@ -110,7 +126,13 @@ function SelectPeople({
       ...options,
     ])
 
-    form.setFieldsValue({ [name]: person.person_id })
+    if (multiple) {
+      form.setFieldsValue({
+        [name]: [...((value as string[]) || []), person.person_id],
+      })
+    } else {
+      form.setFieldsValue({ [name]: person.person_id })
+    }
 
     handleOk()
   }
@@ -123,12 +145,40 @@ function SelectPeople({
     )
   )
 
+  useEffect(() => {
+    if (initialValue) {
+      if (multiple) {
+        const people = initialValue as Person[]
+        setOptions([
+          ...people.map((person: Person) => ({
+            value: person.person_id,
+            label: getPersonLabel(person),
+          })),
+        ])
+        form.setFieldsValue({
+          [name]: [...people.map((person: Person) => person.person_id)],
+        })
+      } else {
+        const person = initialValue as Person
+        setOptions([
+          {
+            value: person.person_id,
+            label: getPersonLabel(person),
+          },
+          ...options,
+        ])
+        form.setFieldsValue({ [name]: person.person_id })
+      }
+    }
+  }, [initialValue])
+
   return (
     <>
       <Form.Item name={name} label={label} rules={[{ required }]}>
         <Select
           allowClear
           showSearch
+          mode={multiple ? 'multiple' : undefined}
           value={value}
           filterOption={false}
           onSearch={debounceFetcher}

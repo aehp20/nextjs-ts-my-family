@@ -79,12 +79,12 @@ function Families() {
                 key: family.family_id,
                 family_name: `
                   ${family.father.first_name}
-                  ${family.father.father_last_name}
-                  ${family.father.mother_last_name}
+                  ${family.father.father_last_name ?? ''}
+                  ${family.father.mother_last_name ?? ''}
                    -
                   ${family.mother.first_name}
-                  ${family.mother.father_last_name}
-                  ${family.mother.mother_last_name}
+                  ${family.mother.father_last_name ?? ''}
+                  ${family.mother.mother_last_name ?? ''}
                 `,
                 count_children: family.children.length,
               })
