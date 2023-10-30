@@ -81,7 +81,6 @@ function PageFamily({ params }: { params: { id: string } }) {
         onFinish={onFinish}
         onFinishFailed={onFinishFailed}
         autoComplete="off"
-        // initialValues={{ gender: 'm' }}
       >
         <SelectPeople
           name="father"

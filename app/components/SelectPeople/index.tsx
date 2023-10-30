@@ -17,7 +17,9 @@ async function fetchPeople(searchValue: string) {
 }
 
 const getPersonLabel = (person: Person) =>
-  `${person.first_name} ${person.father_last_name} ${person.mother_last_name}`
+  `${person.first_name} ${person.father_last_name ?? ''} ${
+    person.mother_last_name ?? ''
+  }`
 
 interface OptionProps {
   value: string
