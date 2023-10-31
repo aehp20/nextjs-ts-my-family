@@ -1,10 +1,10 @@
 import { Pacifico } from 'next/font/google'
 
 import { RootStyleRegistry } from './components/RootStyleRegistry'
-import Navbar from './components/Navbar'
+import StyledComponentsRegistry from '@/app/components/StyledComponentsRegistry'
+import GlobalStyles from '@/app//styles/GlobalStyles'
 
-// todo remove it when we have themes
-// import './globals.css'
+import Navbar from './components/Navbar'
 
 export const metadata = {
   title: 'My family',
@@ -26,10 +26,13 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={pacifico.className}>
-        <RootStyleRegistry>
-          <Navbar />
-          {children}
-        </RootStyleRegistry>
+        <StyledComponentsRegistry>
+          <GlobalStyles />
+          <RootStyleRegistry>
+            <Navbar />
+            {children}
+          </RootStyleRegistry>
+        </StyledComponentsRegistry>
       </body>
     </html>
   )
