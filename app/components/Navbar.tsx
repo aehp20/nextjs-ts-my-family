@@ -18,7 +18,7 @@ const items = [
     key: 'families',
   },
   {
-    label: <Link href="/tree-families">Tree families</Link>,
+    label: <Link href="/tree-families">Family Tree</Link>,
     key: 'tree-families',
   },
 ]

@@ -127,7 +127,7 @@ function Families() {
   return (
     <div>
       <Flex justify="space-between">
-        <Title level={4}>Families</Title>
+        <Title level={4}>Families {totalPages ? `(${totalPages})` : ''}</Title>
         <Space>
           {selectedFamiliesKeys.length > 0 && (
             <Popconfirm

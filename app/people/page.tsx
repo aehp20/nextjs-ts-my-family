@@ -122,7 +122,7 @@ function People() {
   return (
     <div>
       <Flex justify="space-between">
-        <Title level={4}>People</Title>
+        <Title level={4}>People {totalPages ? `(${totalPages})` : ''}</Title>
         <Space>
           {selectedPeopleKeys.length > 0 && (
             <Popconfirm
