@@ -13,6 +13,8 @@ import {
 import { TablePaginationConfig } from 'antd/es/table/interface'
 import Link from 'next/link'
 
+import { fetchFamilies } from '@/app/families/utils'
+
 const { Title } = Typography
 
 const columns = [
@@ -28,15 +30,6 @@ const columns = [
     dataIndex: 'count_children',
   },
 ]
-
-async function fetchFamilies(currentPage: number, currentPageSize: number) {
-  const response = await fetch(
-    `/api/families?page=${currentPage}&limit=${currentPageSize}`
-  )
-  const families = await response.json()
-
-  return families
-}
 
 function Families() {
   const [families, setFamilies] = useState([])

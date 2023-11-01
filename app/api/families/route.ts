@@ -3,16 +3,25 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '../../libs/prisma'
 
 export async function GET(request: NextRequest) {
-  const page = Number(request.nextUrl.searchParams.get('page'))
-  const limit = Number(request.nextUrl.searchParams.get('limit'))
+  const pageParam = request.nextUrl.searchParams.get('page')
+  const limitParm = request.nextUrl.searchParams.get('limit')
+
+  let pagination: { skip: number; take: number } | object = {}
+
+  if (pageParam && limitParm) {
+    const page = Number(pageParam)
+    const limit = Number(limitParm)
+
+    pagination = { skip: (page - 1) * limit, take: limit }
+  }
+
   const count = await prisma.family.aggregate({
     _count: {
       family_id: true,
     },
   })
   const families = await prisma.family.findMany({
-    skip: (page - 1) * limit,
-    take: limit,
+    ...pagination,
     select: {
       family_id: true,
       father: {
