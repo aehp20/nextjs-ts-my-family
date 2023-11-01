@@ -132,6 +132,7 @@ const DivInner = styled.div`
 
   &:hover {
     border-color: rgba(0, 0, 0, 0.8);
+    background: #a4d5ff;
   }
 `
 
