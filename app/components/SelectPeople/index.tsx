@@ -129,8 +129,9 @@ function SelectPeople({
     ])
 
     if (multiple) {
+      const currentValue = form.getFieldValue(name)
       form.setFieldsValue({
-        [name]: [...((value as string[]) || []), person.person_id],
+        [name]: [...((currentValue as string[]) || []), person.person_id],
       })
     } else {
       form.setFieldsValue({ [name]: person.person_id })
