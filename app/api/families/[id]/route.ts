@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { prisma } from '../../../libs/prisma'
+import { prisma } from '@/app/libs/prisma'
 
 export async function GET(
   request: NextRequest,
@@ -49,10 +49,8 @@ export async function PUT(
       father_id: father,
       mother_id: mother,
     },
-  })
-  const currentFamily = await prisma.family.findUnique({
-    where: { family_id: params.id },
     select: {
+      family_id: true,
       children: {
         select: {
           person_id: true,
@@ -60,29 +58,23 @@ export async function PUT(
       },
     },
   })
-  if (
-    currentFamily &&
-    currentFamily.children &&
-    currentFamily.children.length > 0
-  ) {
-    currentFamily.children.forEach(async (person: { person_id: string }) => {
-      await prisma.person.update({
+  const response = await prisma.$transaction([
+    ...updatedFamily.children.map((person: { person_id: string }) =>
+      prisma.person.update({
         where: { person_id: person.person_id },
         data: {
           family_id: null,
         },
       })
-    })
-  }
-  if (children && children.length > 0) {
-    children.forEach(async (person_id: string) => {
-      await prisma.person.update({
+    ),
+    ...children.map((person_id: string) =>
+      prisma.person.update({
         where: { person_id },
         data: {
           family_id: updatedFamily.family_id,
         },
       })
-    })
-  }
-  return NextResponse.json(updatedFamily)
+    ),
+  ])
+  return NextResponse.json(response)
 }
